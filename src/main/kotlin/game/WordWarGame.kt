@@ -153,6 +153,23 @@ object WordWarGame {
         }
     }
 
+    suspend fun disconnectPlayer(roomId: String, playerId: String) {
+        mutex.withLock {
+            val room = rooms[roomId] ?: return
+            room.players.remove(playerId)
+            room.state.update { gameState ->
+                gameState.copy(
+                    connectedPlayers = room.players.map { PlayerState(it.value.name, it.value.id) }
+                )
+            }
+
+            if (room.players.isEmpty()) {
+                broadcastToRoom(roomId, "Room $roomId will be disposed.")
+                rooms.remove(roomId)
+            }
+        }
+    }
+
     /*
         PRIVATE FUNCTIONS
     */

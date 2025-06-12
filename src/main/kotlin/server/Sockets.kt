@@ -42,8 +42,8 @@ fun Application.configureSockets() {
                 println("Error: ${e.message}")
                 this.send("Some error occurred while connecting to the server")
             } finally {
-                WordWarGame.disposeRoom(roomId)
-                close(CloseReason(CloseReason.Codes.NORMAL, "Room $roomId disposed"))
+                WordWarGame.disconnectPlayer(roomId, playerId)
+                close(CloseReason(CloseReason.Codes.NORMAL, "Connection closed"))
             }
         }
     }
